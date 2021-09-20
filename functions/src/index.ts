@@ -1,9 +1,15 @@
-import * as functions from "firebase-functions";
+import functions = require("firebase-functions");
+import admin = require("firebase-admin");
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// firebase-adminの初期化
+admin.initializeApp();
+
+exports.deleteUser = functions
+    .region("asia-northeast1")
+    .firestore.document("delete_users/{docId}")
+    .onCreate(async (snap, context) => {
+      const deleteDocument = snap.data();
+      const uid = deleteDocument.uid;
+
+      await admin.auth().deleteUser(uid);
+    });
